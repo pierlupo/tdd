@@ -15,55 +15,89 @@ public class ShopTest {
         shop = new Shop();
     }
     @Test
-    void testUpdateShouldDecreaseQuality(){
-    //Arrange
-    product = Product.builder().quality(10).sellin(10).name("p1").type("c1").build();
-    //Act
-    shop.update(product);
-    Assertions.assertEquals(9, product.getSellin());
+    void testUpdateShouldDecreaseQuality() throws QualityException {
+        //Arrange
+        product = Product.builder().quality(10).sellin(10).name("p1").type("c1").build();
+        //Act
+        shop.update(product);
+
+        Assertions.assertEquals(9, product.getQuality());
+    }
+
+    @Test
+    void testUpdateShouldDecreaseSellIn() throws QualityException {
+        //Arrange
+        product = Product.builder().quality(10).sellin(10).name("p1").type("c1").build();
+        //Act
+        shop.update(product);
+
+        Assertions.assertEquals(9, product.getSellin());
     }
     @Test
-    void testUpdateShouldDecreaseQualityTwiceAsMuchWhenSellinIs0(){
+    void testUpdateShouldDecreaseQualityTwiceWhenSellInIs0() throws QualityException {
         //Arrange
         product = Product.builder().quality(10).sellin(0).name("p1").type("c1").build();
         //Act
         shop.update(product);
-        Assertions.assertEquals(9, product.getQuality());
+
+        Assertions.assertEquals(8, product.getQuality());
     }
     @Test
-    void testUpdateShouldRaiseQualityExceptionWhenQualityIsNeg(){
+    void testUpdateShouldRaiseQualityExceptionWhenQualityIsNeg() throws QualityException {
         //Arrange
         product = Product.builder().quality(-10).sellin(0).name("p1").type("c1").build();
         //Act
-        shop.update(product);
         Assertions.assertThrowsExactly(QualityException.class, ()->{
             shop.update(product);
         });
     }
     @Test
-    void testUpdateShouldRaiseQualityExceptionWhenQualityIsAbove50(){
+    void testUpdateShouldRaiseQualityExceptionWhenQualityIsAbove50() throws QualityException {
         //Arrange
         product = Product.builder().quality(50).sellin(0).name("p1").type("c1").build();
         //Act
-        shop.update(product);
         Assertions.assertThrowsExactly(QualityException.class, ()->{
             shop.update(product);
         });
     }
     @Test
-    void testUpdateShouldIncreaseQualityWhenProductIsBrie(){
+    void testUpdateShouldIncreaseQualityWhenProductIsBrie() throws QualityException {
         //Arrange
-        product = Product.builder().quality(10).sellin(0).name("p1").type("c1").build();
+        product = Product.builder().quality(10).sellin(10).name("brie vieilli").type("laitier").build();
         //Act
         shop.update(product);
         Assertions.assertEquals(11, product.getQuality());
     }
     @Test
-    void testUpdateShouldDecreaseQualityTwiceWhenProductTypeIsLaitier(){
+    void testUpdateShouldDecreaseQualityTwiceWhenProductTypeIsLaitier() throws QualityException {
+        //Arrange
+        product = Product.builder().quality(10).sellin(10).name("p1").type("laitier").build();
+        //Act
+        shop.update(product);
+        Assertions.assertEquals(8, product.getQuality());
+    }
+    @Test
+    void testUpdateShouldDecreaseQualityTwiceWhenProductTypeIsLaitierAndSellInIs0() throws QualityException {
         //Arrange
         product = Product.builder().quality(10).sellin(0).name("p1").type("laitier").build();
         //Act
         shop.update(product);
-        Assertions.assertEquals(8, product.getQuality());
+        Assertions.assertEquals(6, product.getQuality());
+    }
+    @Test
+    void testUpdateQualityShouldBe0WhenProductIsLaitierAndSellIs0() throws QualityException {
+        //Arrange
+        product = Product.builder().quality(3).sellin(0).name("p1").type("laitier").build();
+        //Act
+        shop.update(product);
+        Assertions.assertEquals(0   , product.getQuality());
+    }
+    @Test
+    void testUpdateQualityShouldBe0WhenQualityIs2AndSellIs0() throws QualityException {
+        //Arrange
+        product = Product.builder().quality(2).sellin(0).name("p1").type("c1").build();
+        shop.update(product);
+        //Act
+        Assertions.assertEquals(0   , product.getQuality());
     }
 }
